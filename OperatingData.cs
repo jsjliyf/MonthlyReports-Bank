@@ -171,7 +171,7 @@ namespace OperatingData
         /// <returns>取出的DataTable</returns>
         public static DataTable DTfromDB(string strSql, string dbName)
         {
-            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid=sa;pwd=liyf12345F"))
+            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid=lyf;pwd=HiAmigo168F"))
             {
                 try
                 {

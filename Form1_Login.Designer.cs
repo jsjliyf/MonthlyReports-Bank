@@ -218,8 +218,8 @@
             // 
             this.comboBox_ServerIP.FormattingEnabled = true;
             this.comboBox_ServerIP.Items.AddRange(new object[] {
-            "111.11.100.6",
-            "10.20.66.6"});
+            "10.20.66.6",
+            "111.11.100.6"});
             this.comboBox_ServerIP.Location = new System.Drawing.Point(65, 228);
             this.comboBox_ServerIP.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox_ServerIP.Name = "comboBox_ServerIP";

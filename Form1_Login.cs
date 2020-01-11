@@ -68,7 +68,7 @@ namespace MonthlyReports_Bank
                 if (!string.Equals(loginPassMD5, loginPass, StringComparison.CurrentCultureIgnoreCase))
                     loginPassMD5 = OperatingData.OperatingData.ComputeMD5Hash(loginPass).ToLower();
 
-                DataTable dt_Login = OperatingData.OperatingData.DTfromDB("select * from tb_BankUser where county='" + loginCounty + "' and bank='" + loginBank + "' and passMD5='" + loginPassMD5.ToLower() + "'", "db_CountyCollection");
+                DataTable dt_Login = OperatingData.OperatingData.DTfromDB("select * from tb_BankUser where county='" + loginCounty + "' and bank='" + loginBank + "' and passMD5='" + loginPassMD5.ToLower() + "'", "db_MonthlyReports");
                 if (dt_Login == null)
                 {
                     MessageBox.Show("账号或密码错误，请重新登录");
