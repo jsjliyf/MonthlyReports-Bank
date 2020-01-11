@@ -24,7 +24,7 @@ namespace MonthlyReports_Bank
         DataSet dsFromExcel;
         DataGridView dgv_Warning;
         static string reportName;
-        static string lastReportDay;
+        static string lastDay_Report;
         static string dbName;
 
         public UC_Warning()
@@ -49,8 +49,8 @@ namespace MonthlyReports_Bank
             dgv_Warning.DragDrop += dgv_Warning_DragDrop;
 
             //取当月最后一天
-            lastReportDay = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
-            reportName = Form_Login.loginBank  + "_预警"+ "_" + lastReportDay;
+            lastDay_Report = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
+            reportName = Form_Login.loginBank  + "_预警"+ "_" + lastDay_Report;
         }
 
         private void InitDgv(DataGridView dgv)
@@ -141,7 +141,7 @@ namespace MonthlyReports_Bank
             dtFromDgv.TableName = reportName;
 
             if (DialogResult.Yes == 
-                MessageBox.Show("将要上报" + Form_Login.loginBank + "第" + lastReportDay + "期的预警表，确定上报吗", "是否上报", MessageBoxButtons.YesNo))
+                MessageBox.Show("将要上报" + Form_Login.loginBank + "第" + lastDay_Report + "期的预警表，确定上报吗", "是否上报", MessageBoxButtons.YesNo))
             {
                 OperatingData.OperatingData.DTtoDB(dtFromDgv, "db_SpecificReports");
             }
@@ -238,8 +238,8 @@ namespace MonthlyReports_Bank
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            lastReportDay = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
-            reportName = Form_Login.loginBank + "_预警" + "_" + lastReportDay;
+            lastDay_Report = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
+            reportName = Form_Login.loginBank + "_预警" + "_" + lastDay_Report;
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)

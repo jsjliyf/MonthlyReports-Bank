@@ -141,7 +141,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="审核项目.ico" />
     <Content Include="审核项目1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
