@@ -35,6 +35,7 @@
             this.buttonQuery = new System.Windows.Forms.Button();
             this.buttonUpload = new System.Windows.Forms.Button();
             this.buttonCheck = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // dateTimePicker1
@@ -45,6 +46,7 @@
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(77, 21);
             this.dateTimePicker1.TabIndex = 3;
+            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
             // tabControl1
             // 
@@ -63,7 +65,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(293, 12);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(164, 13);
+            this.label2.Size = new System.Drawing.Size(149, 12);
             this.label2.TabIndex = 20;
             this.label2.Text = "(支持文件直接拖放到下表)";
             // 
@@ -85,6 +87,7 @@
             this.buttonQuery.TabIndex = 21;
             this.buttonQuery.Text = "查询";
             this.buttonQuery.UseVisualStyleBackColor = true;
+            this.buttonQuery.Click += new System.EventHandler(this.buttonQuery_Click);
             // 
             // buttonUpload
             // 
@@ -105,6 +108,10 @@
             this.buttonCheck.Text = "校验";
             this.buttonCheck.UseVisualStyleBackColor = true;
             this.buttonCheck.Click += new System.EventHandler(this.buttonCheck_Click);
+            // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
             // UC_Warning
             // 
@@ -134,5 +141,6 @@
         private System.Windows.Forms.Button buttonQuery;
         private System.Windows.Forms.Button buttonUpload;
         private System.Windows.Forms.Button buttonCheck;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

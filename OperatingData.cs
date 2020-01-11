@@ -16,12 +16,18 @@ namespace OperatingData
 {
     public class OperatingData
     {
+        //DB login information
+        private static string DB_UserName = "lyf";
+        private static string DB_PassWord = "HiAmigo168F";
+
         /// <summary>
         /// NPOI方式读取Excel
         /// </summary>
         /// <param name="strFileName">Excel文件路径</param>
+        /// <param name="reportType">表格类型</param>
+        /// <param name="needFirstRow">是否需要取出首行数据，若不需要，则将首行作为DT的列标题</param>
         /// <returns>对应的DataSet</returns>
-        public static DataSet DSFromExcel(string strFileName, string reportType)
+        public static DataSet DSFromExcel(string strFileName, string reportType,bool needFirstRow)
         {
             DataSet ds = new DataSet();
 
@@ -72,20 +78,21 @@ namespace OperatingData
                     }
                     else if (reportType == "预警")
                     {
-                        if (headrow.LastCellNum != 3)
-                        {
-                            MessageBox.Show("导入的表列数不对，只能有3列，请删除空列");
-                            return null;
-                        }
-                        if (!GetCellValue(headrow.GetCell(0)).Contains("监管指标"))
+                        if (headrow.LastCellNum != 3 ||
+                            !GetCellValue(headrow.GetCell(0)).Contains("监管指标"))
                         {
                             MessageBox.Show("导入的表不是标准格式，请从“文件”里面下载报送模板进行填报。");
                             return null;
                         }
                     }
                     #endregion
-
-                    for (int r = 0; r <= sheet.LastRowNum; r++)  //从第二行开始取数，LastRowNum 是当前表的总行数
+                    //取出sheet中的全部数据
+                    int firstRow = 0;
+                    if (!needFirstRow)
+                    {
+                        firstRow = 1;
+                    }
+                    for (int r = firstRow; r <= sheet.LastRowNum; r++)
                     {
                         IRow row = sheet.GetRow(r);  //读取当前行数据
                         DataRow dr = dt.NewRow();
@@ -171,7 +178,7 @@ namespace OperatingData
         /// <returns>取出的DataTable</returns>
         public static DataTable DTfromDB(string strSql, string dbName)
         {
-            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid=lyf;pwd=HiAmigo168F"))
+            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid=" + DB_UserName + ";pwd=" + DB_PassWord))
             {
                 try
                 {
@@ -205,7 +212,7 @@ namespace OperatingData
                 return false;
             }
 
-            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid=sa;pwd=liyf12345F"))
+            using (SqlConnection conn = new SqlConnection("server=" + Form_Login.serverIP + ";database=" + dbName + ";uid="+DB_UserName+";pwd="+DB_PassWord))
             {
                 string strUpdate = string.Format(@"update {0} set passMD5='{1}' where county='{2}' and bank='{3}'", dtName, Form_Login.loginPassMD5, Form_Login.loginCounty, Form_Login.loginBank);
                 SqlCommand comm = new SqlCommand(strUpdate, conn);
@@ -238,7 +245,7 @@ namespace OperatingData
 
             //判断要导入的表在数据库中是否存在
             string strSql_GetTableName = "SELECT NAME FROM sysobjects WHERE XTYPE = 'U' AND NAME='" + dt_ToDB.TableName + "' ORDER BY NAME";
-            DataTable dt_TableName = DTfromDB(strSql_GetTableName, "db_CountyCollection");
+            DataTable dt_TableName = DTfromDB(strSql_GetTableName, dbName);
 
             //不存在此表则创建新表
             if (dt_TableName == null || dt_TableName.Rows.Count == 0)
@@ -250,7 +257,7 @@ namespace OperatingData
                 //如果是登录用户信息表，则直接清空用户登录信息
                 if (dt_ToDB.TableName == "tb_BankUser")
                 {
-                    using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid=sa;pwd=liyf12345F"))
+                    using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid="+DB_UserName+";pwd="+DB_PassWord))
                     {
                         if (sqlConn.State == ConnectionState.Closed)
                             sqlConn.Open();
@@ -279,7 +286,7 @@ namespace OperatingData
                     //仍然导入，则先清空原数据
                     if (dr == DialogResult.OK)
                     {
-                        using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid=sa;pwd=liyf12345F"))
+                        using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid="+DB_UserName+";pwd="+DB_PassWord))
                         {
                             if (sqlConn.State == ConnectionState.Closed)
                                 sqlConn.Open();
@@ -312,7 +319,7 @@ namespace OperatingData
             }
 
             //SqlBulkCopy批量导入数据
-            using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid=sa;pwd=liyf12345F"))
+            using (SqlConnection sqlConn = new SqlConnection("server="+ Form_Login.serverIP+";database=" + dbName + ";uid="+DB_UserName+";pwd="+DB_PassWord))
             {
                 if (sqlConn.State == ConnectionState.Closed)
                     sqlConn.Open();
@@ -361,7 +368,7 @@ namespace OperatingData
             try
             {
                 //注意这里不要用Integrated Security=SSPI，这样连接其他机器如服务器的数据库时会报错，直接用登录名和密码登录即可
-                string connString = "Initial Catalog=" + dbName + ";" + "Data Source=" + Form_Login.serverIP + ";uid=sa;pwd=liyf12345F";
+                string connString = "Initial Catalog=" + dbName + ";" + "Data Source=" + Form_Login.serverIP + ";uid="+DB_UserName+";pwd="+DB_PassWord;
                 SqlConnection conn = new SqlConnection();
                 conn.ConnectionString = connString;
                 conn.Open();
@@ -369,6 +376,7 @@ namespace OperatingData
                 string strSql = "CREATE TABLE " + dt.TableName + "(";
 
                 //！！注意列名中如果含有特殊字符，要加中括号[]引起来，防止sql无法识别
+                //另注意，表的名字是有限制的，最好不要以数字开头，不能包括特殊字符，如“-”等（但：下划线_是可以的）
                 for (int c = 0; c < dt.Columns.Count; c++)
                 {
                     if (c != dt.Columns.Count - 1)
@@ -499,8 +507,8 @@ namespace OperatingData
             #region 判断格式是否正确
             if (ReportType == "预警")
             {
-                if (dgv.ColumnCount + 1 != dt.Columns.Count || dgv.Rows.Count + 1 != dt.Rows.Count
-                || dt.Rows[0][0].ToString() != "监管指标")
+                if (dgv.ColumnCount + 1 != dt.Columns.Count || dgv.Rows.Count != dt.Rows.Count
+                || !dt.Rows[0][0].ToString().Contains("资本充足率"))
                 {
                     MessageBox.Show("导入的Excel不是正确的格式，请重新导入"); return;
                 }
@@ -538,26 +546,68 @@ namespace OperatingData
             }
         }
 
-        public static DataTable Copy_Dgv_To_DataTable(DataGridView dgv)
+        /// <summary>
+        /// 将Dgv的数据复制到DataTable中，注意：统一将Dgv的列标题作为DT的列名
+        /// </summary>
+        /// <param name="dgv">待拷贝的Dgv</param>
+        /// <param name="needRowHeader">是否需要将Dgv的行头复制到DT中</param>
+        /// <returns></returns>
+        public static DataTable Copy_Dgv_To_DataTable(DataGridView dgv,string ReportType, bool needRowHeader)
         {
+            string headerName = null;
+            if(ReportType == "预警")
+            {
+                headerName = "监测指标";
+            }
             DataTable dt = new DataTable();
             //添加列
+            //如果需要行头，则先添加一列
+            if (needRowHeader)
+            {
+                DataColumn dc_Header = new DataColumn(headerName);
+                dt.Columns.Add(dc_Header);
+            }
+            //添加正常列
             for (int columnCount = 0; columnCount < dgv.Columns.Count; columnCount++)
             {
                 DataColumn dc = new DataColumn(dgv.Columns[columnCount].Name.ToString());
                 dt.Columns.Add(dc);
             }
-            
+
             //添加行
-            for (int r = 0; r < dgv.RowCount; r++)
+            //若needRowHeader，先添加除了列头的行
+            if (needRowHeader)
             {
-                DataRow dr = dt.NewRow();
-                for (int c = 0; c < dgv.Columns.Count; c++)
+                //先从DT的第二列开始添加Dgv的各行数据
+                for (int r = 0; r < dgv.RowCount; r++)
                 {
-                    dr[c] = Convert.ToString(dgv.Rows[r].Cells[c].Value);
+                    DataRow dr = dt.NewRow();
+                    for (int c = 0; c < dgv.ColumnCount; c++)
+                    {
+                        dr[c + 1] = Convert.ToString(dgv.Rows[r].Cells[c].Value);
+                    }
+                    dt.Rows.Add(dr);
                 }
-                dt.Rows.Add(dr);
+                //再在每行的第一列添加行头
+                for (int j = 0; j < dgv.RowCount; j++)
+                {
+                    dt.Rows[j][0] = dgv.Rows[j].HeaderCell.Value.ToString();
+                }
             }
+
+            else  //Don't needRowHeader
+            {
+                for (int r = 0; r < dgv.RowCount; r++)
+                {
+                    DataRow dr = dt.NewRow();
+                    for (int c = 0; c < dgv.ColumnCount; c++)
+                    {
+                        dr[c] = Convert.ToString(dgv.Rows[r].Cells[c].Value);
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+
             return dt;
         }
         #endregion

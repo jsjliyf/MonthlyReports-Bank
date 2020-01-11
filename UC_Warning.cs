@@ -23,6 +23,9 @@ namespace MonthlyReports_Bank
        
         DataSet dsFromExcel;
         DataGridView dgv_Warning;
+        static string reportName;
+        static string lastReportDay;
+        static string dbName;
 
         public UC_Warning()
         {
@@ -31,17 +34,23 @@ namespace MonthlyReports_Bank
 
         private void UC_Warning_Load(object sender, EventArgs e)
         {
+            dbName = "db_SpecificReports";
             dateTimePicker1.Value = DateTime.Now.AddMonths(-1);
 
             //Initialize the DataGridView
             dgv_Warning = new DataGridView();
-            dgv_Warning.Name = "村镇银行预警";
+            dgv_Warning.Name = "非现场监测预警";
 
             InitDgv(dgv_Warning);
             DisplaySheet(dgv_Warning);
 
+            dgv_Warning.AllowDrop = true;
             dgv_Warning.DragEnter += dgv_Warning_DragEnter;
             dgv_Warning.DragDrop += dgv_Warning_DragDrop;
+
+            //取当月最后一天
+            lastReportDay = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
+            reportName = Form_Login.loginBank  + "_预警"+ "_" + lastReportDay;
         }
 
         private void InitDgv(DataGridView dgv)
@@ -107,13 +116,13 @@ namespace MonthlyReports_Bank
                 dsFromExcel = new DataSet();
 
                 //NPoI方式读取Excel
-                dsFromExcel = OperatingData.OperatingData.DSFromExcel(excelPath, "预警");
+                dsFromExcel = OperatingData.OperatingData.DSFromExcel(excelPath, "预警",false);
                 if (dsFromExcel == null) return;
                 if (dsFromExcel != null && dsFromExcel.Tables.Count == 0) return;
 
                 //将DataSet数据填充到DataGridView
                 DataTable dtFromExcel = dsFromExcel.Tables[0];
-                OperatingData.OperatingData.Copy_DT_To_DataGridView(dtFromExcel, dgv_Warning, "预警", 1, 2, 0, 1);
+                OperatingData.OperatingData.Copy_DT_To_DataGridView(dtFromExcel, dgv_Warning, "预警", 0, 2, 0, 1);
             }
         }
 
@@ -126,66 +135,43 @@ namespace MonthlyReports_Bank
                 return;
             }
             //将dgv_Warning的数据传入至DataTable
-            DataTable dtFromDgv = OperatingData.OperatingData.Copy_Dgv_To_DataTable(dgv_Warning);
+            DataTable dtFromDgv = OperatingData.OperatingData.Copy_Dgv_To_DataTable(dgv_Warning,"预警", true);
 
+            //设置表名，对应数据库中表的名字
+            dtFromDgv.TableName = reportName;
 
-            //设置表名
-            //dtFromDgv.TableName = dtFromDgv.Rows[0][1].ToString() + dtFromDgv.Rows[0][2].ToString() + dtFromDgv.Rows[0][0].ToString();
-
-            OperatingData.OperatingData.DTtoDB(dtFromDgv, "db_CountyCollection");
+            if (DialogResult.Yes == 
+                MessageBox.Show("将要上报" + Form_Login.loginBank + "第" + lastReportDay + "期的预警表，确定上报吗", "是否上报", MessageBoxButtons.YesNo))
+            {
+                OperatingData.OperatingData.DTtoDB(dtFromDgv, "db_SpecificReports");
+            }
         }
 
         //校验数据
         private bool CheckData()
         {
-            bool checkedData = false;
-            //先判断dgv_Warning里面是否有数据，如果没有，则要求其导入或直接填上数据
-            if (dgv_Warning.Rows.Count != 1)
-            {
-                MessageBox.Show("表的行数有错误，只能有1个数据行");
-                return false;
-            }
-            if (dgv_Warning.Columns.Count != 8)
-            {
-                MessageBox.Show("表的列数有错误，只能有8个数据列");
-                return false;
-            }
-
-            if (dgv_Warning.Rows[0].Cells[0].Value == null)
-                return false;
-
+            /* 日期格式核对
             string pattern = @"^20(0|1|2|3)\d(0|1)\d$";
             if (Regex.IsMatch(dgv_Warning.Rows[0].Cells[0].Value.ToString(), pattern) == false)
             {
                 MessageBox.Show("输入的日期格式不正确，格式为\"201901\"");
                 return false;
             }
-
-            for (int c = 0; c < dgv_Warning.Columns.Count; c++)
+            */
+            for (int r = 0; r < dgv_Warning.RowCount; r++)
             {
-                //不允许为空
-                if (dgv_Warning.Rows[0].Cells[c].Value == null || dgv_Warning.Rows[0].Cells[c].Value.ToString() == "")
+                for (int c = 0; c < dgv_Warning.Columns.Count; c++)
                 {
-                    MessageBox.Show("表中不允许存在空单元格，若当期数为0，请填写0");
-                    return false;
+                    //不允许为空
+                    if (dgv_Warning.Rows[0].Cells[c].Value == null || dgv_Warning.Rows[0].Cells[c].Value.ToString() == "")
+                    {
+                        MessageBox.Show("行["+(r+1).ToString()+"]列["+(c+1).ToString()+"]为空，" + "表中不允许存在空单元格，若当期数为0，请填写0");
+                        return false;
+                    }
                 }
             }
-
-            //判断县域、机构名称是否与登录信息一致
-            if (Form_Login.loginCounty != dgv_Warning.Rows[0].Cells[1].Value.ToString())
-            {
-                MessageBox.Show("\"区县名称\"与登录信息不一致，请改成与登录信息一致的区县名称");
-                return false;
-            }
-            if (Form_Login.loginBank != dgv_Warning.Rows[0].Cells[2].Value.ToString())
-            {
-                MessageBox.Show("\"行名\"与登录信息不一致，请改成与登录信息一致的行名\r\n（见本界面左上角登录信息）");
-                return false;
-            }
-
-            checkedData = true;
-
-            return checkedData;
+            
+            return true;
         }
 
         private void buttonCheck_Click(object sender, EventArgs e)
@@ -240,13 +226,45 @@ namespace MonthlyReports_Bank
                     dsFromExcel = new DataSet();
 
                     //NPoI方式读取Excel
-                    dsFromExcel = OperatingData.OperatingData.DSFromExcel(paths[0], "预警");
+                    dsFromExcel = OperatingData.OperatingData.DSFromExcel(paths[0], "预警",false);
                     if (dsFromExcel == null) return;
                     if (dsFromExcel != null && dsFromExcel.Tables.Count == 0) return;
                     DataTable dt = dsFromExcel.Tables[0];
                     if (dt.Rows.Count == 0) return;
-                    OperatingData.OperatingData.Copy_DT_To_DataGridView(dt, dgv_Warning, "预警", 1, 2, 0, 1);
+                    OperatingData.OperatingData.Copy_DT_To_DataGridView(dt, dgv_Warning, "预警", 0, 2, 0, 1);
                 }
+            }
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            lastReportDay = dateTimePicker1.Value.AddDays(1 - dateTimePicker1.Value.Day).AddMonths(1).AddDays(-1).ToString("yyyyMMdd");
+            reportName = Form_Login.loginBank + "_预警" + "_" + lastReportDay;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+        }
+
+        private void buttonQuery_Click(object sender, EventArgs e)
+        {
+            //先查询数据库是否存在当期表
+            string strSql_GetTableName = "SELECT NAME FROM sysobjects WHERE XTYPE = 'U' AND NAME='" + reportName + "' ORDER BY NAME";
+            DataTable dt_TableName = OperatingData.OperatingData.DTfromDB(strSql_GetTableName, dbName);
+
+            //不存在
+            if (dt_TableName == null || dt_TableName.Rows.Count == 0)
+            { MessageBox.Show("未查找到相应的表"); return; }
+
+            //有相应表
+            else if (dt_TableName.Rows.Count > 0)
+            {
+                //取出表中详细数据
+                string strSql_GetTable = "SELECT * FROM " + reportName;
+                DataTable dt_Query = OperatingData.OperatingData.DTfromDB(strSql_GetTable, dbName);
+                //将数据显示到Dgv中
+                OperatingData.OperatingData.Copy_DT_To_DataGridView(dt_Query, dgv_Warning, "预警", 0, 2, 0, 1);
             }
         }
     }

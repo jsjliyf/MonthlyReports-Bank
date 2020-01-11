@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("月度工作报告附表");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("非现场预警触发值");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("非现场预警触发值");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("月度工作报告附表");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("县域基础数据报送");
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.修改密码ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -193,7 +193,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(0, 26);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -216,14 +216,14 @@
             this.treeView1.ItemHeight = 30;
             this.treeView1.LineColor = System.Drawing.Color.SteelBlue;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.treeView1.Margin = new System.Windows.Forms.Padding(2);
             this.treeView1.Name = "treeView1";
             treeNode1.Name = "节点0";
             treeNode1.NodeFont = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode1.Text = "月度工作报告附表";
+            treeNode1.Text = "非现场预警触发值";
             treeNode2.Name = "节点1";
             treeNode2.NodeFont = new System.Drawing.Font("微软雅黑", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode2.Text = "非现场预警触发值";
+            treeNode2.Text = "月度工作报告附表";
             treeNode3.Name = "节点0";
             treeNode3.Text = "县域基础数据报送";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
@@ -239,7 +239,7 @@
             // 
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(640, 430);
