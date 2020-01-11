@@ -128,6 +128,7 @@ namespace MonthlyReports_Bank
             //将dgv_Warning的数据传入至DataTable
             DataTable dtFromDgv = OperatingData.OperatingData.Copy_Dgv_To_DataTable(dgv_Warning);
 
+
             //设置表名
             //dtFromDgv.TableName = dtFromDgv.Rows[0][1].ToString() + dtFromDgv.Rows[0][2].ToString() + dtFromDgv.Rows[0][0].ToString();
 
