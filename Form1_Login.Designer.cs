@@ -218,14 +218,14 @@
             // 
             this.comboBox_ServerIP.FormattingEnabled = true;
             this.comboBox_ServerIP.Items.AddRange(new object[] {
-            "192.168.101.235",
+            "111.11.100.6",
             "10.20.66.6"});
             this.comboBox_ServerIP.Location = new System.Drawing.Point(65, 228);
-            this.comboBox_ServerIP.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBox_ServerIP.Margin = new System.Windows.Forms.Padding(2);
             this.comboBox_ServerIP.Name = "comboBox_ServerIP";
             this.comboBox_ServerIP.Size = new System.Drawing.Size(103, 20);
             this.comboBox_ServerIP.TabIndex = 15;
-            this.comboBox_ServerIP.Text = "10.20.66.6";
+            this.comboBox_ServerIP.Text = "111.11.100.6";
             this.comboBox_ServerIP.SelectedIndexChanged += new System.EventHandler(this.ComboBox_ServerIP_SelectedIndexChanged);
             // 
             // Form_Login
