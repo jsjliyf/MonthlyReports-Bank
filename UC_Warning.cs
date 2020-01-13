@@ -146,8 +146,22 @@ namespace MonthlyReports_Bank
                 OperatingData.OperatingData.DTtoDB(dtFromDgv, "db_SpecificReports");
             }
         }
+        
+        private void buttonCheck_Click(object sender, EventArgs e)
+        {
+            if (CheckData() == true)
+            {
+                MessageBox.Show("校验通过");
+                return;
+            }
+            else
+            {
+                MessageBox.Show("校验未通过");
+                return;
+            }
+        }
 
-        //校验数据
+        //校验数据，加上与1104数据的核对
         private bool CheckData()
         {
             /* 日期格式核对
@@ -165,27 +179,13 @@ namespace MonthlyReports_Bank
                     //不允许为空
                     if (dgv_Warning.Rows[0].Cells[c].Value == null || dgv_Warning.Rows[0].Cells[c].Value.ToString() == "")
                     {
-                        MessageBox.Show("行["+(r+1).ToString()+"]列["+(c+1).ToString()+"]为空，" + "表中不允许存在空单元格，若当期数为0，请填写0");
+                        MessageBox.Show("行[" + (r + 1).ToString() + "]列[" + (c + 1).ToString() + "]为空，" + "表中不允许存在空单元格，若当期数为0，请填写0");
                         return false;
                     }
                 }
             }
-            
-            return true;
-        }
 
-        private void buttonCheck_Click(object sender, EventArgs e)
-        {
-            if (CheckData() == true)
-            {
-                MessageBox.Show("校验通过");
-                return;
-            }
-            else
-            {
-                MessageBox.Show("校验未通过");
-                return;
-            }
+            return true;
         }
 
         //拖放
