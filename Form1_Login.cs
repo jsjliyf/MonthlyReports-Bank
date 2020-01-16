@@ -17,14 +17,7 @@ namespace MonthlyReports_Bank
 
         public static string[] bankType = { "政策性银行", "大型银行(含邮储）", "股份制银行(全国性股份制+城商行）", "县域农合机构(农商行+县联社)", "村镇银行" };
         //public static string[] county = { "枣强", "武邑", "深州", "武强", "饶阳", "安平", "故城", "景县", "阜城", "衡水" };
-        public static string[] bank =  { "农业发展银行",//0
-            "工商银行","农业银行","中国银行","建设银行","交通银行","邮储银行",//1-6
-            "民生银行","浦发银行","衡水银行","河北银行","邢台银行","沧州银行","张家口银行",//7-13
-        "安平惠民村镇银行","深州丰源村镇银行","阜城家银村镇银行","故城家银村镇银行","武强家银村镇银行",//14-18
-            "饶阳民商村镇银行","武邑邢农商村镇银行","枣强丰源村镇银行","冀州丰源村镇银行","景州丰源村镇银行",//19-23
-            "衡水农商行","阜城农商行","武强农商行","景州农商行",//24-27
-            "冀州农商行","枣强农商行","安平农商行","深州农商行",//28-31
-            "饶阳联社","故城联社","武邑联社" };//32-34
+        private static string[] bank;
 
         public static string loginBank=null;
         public static string loginCounty=null;
@@ -32,6 +25,8 @@ namespace MonthlyReports_Bank
         public static string loginPassMD5 = null;
 
         public static string serverIP = null;
+
+        public static string[] Bank { get => bank; set => bank = CommonModule.CommonName.StrArray_BankName; }
 
         private void Form_Login_Load(object sender, EventArgs e)
         {
@@ -115,14 +110,14 @@ namespace MonthlyReports_Bank
             if (comboBox_BankType.SelectedItem.ToString() == "政策性银行")
             {
                 comboBox_Bank.Items.Clear();
-                comboBox_Bank.Items.Add(bank[0]);
+                comboBox_Bank.Items.Add(Bank[0]);
                 comboBox_Bank.Text = comboBox_Bank.Items[0].ToString();
             }
             else if(comboBox_BankType.SelectedItem.ToString() == "大型银行(含邮储）")
             {
                 comboBox_Bank.Items.Clear();
                 string[] bank_select = new string[6];
-                Array.ConstrainedCopy(bank, 1, bank_select, 0, 6);
+                Array.ConstrainedCopy(Bank, 1, bank_select, 0, 6);
                 comboBox_Bank.Items.AddRange(bank_select);
                 comboBox_Bank.Text = comboBox_Bank.Items[0].ToString();
             }
@@ -130,7 +125,7 @@ namespace MonthlyReports_Bank
             {
                 comboBox_Bank.Items.Clear();
                 string[] bank_select = new string[7];
-                Array.ConstrainedCopy(bank, 7, bank_select, 0, 7);
+                Array.ConstrainedCopy(Bank, 7, bank_select, 0, 7);
                 comboBox_Bank.Items.AddRange(bank_select);
                 comboBox_Bank.Text = comboBox_Bank.Items[0].ToString();
             }
@@ -138,7 +133,7 @@ namespace MonthlyReports_Bank
             {
                 comboBox_Bank.Items.Clear();
                 string[] bank_select = new string[11];
-                Array.ConstrainedCopy(bank, 24, bank_select, 0, 11);
+                Array.ConstrainedCopy(Bank, 24, bank_select, 0, 11);
                 comboBox_Bank.Items.AddRange(bank_select);
                 comboBox_Bank.Text = comboBox_Bank.Items[0].ToString();
             }
@@ -146,7 +141,7 @@ namespace MonthlyReports_Bank
             {
                 comboBox_Bank.Items.Clear();
                 string[] bank_select = new string[10];
-                Array.ConstrainedCopy(bank, 14, bank_select, 0, 10);
+                Array.ConstrainedCopy(Bank, 14, bank_select, 0, 10);
                 comboBox_Bank.Items.AddRange(bank_select);
                 comboBox_Bank.Text = comboBox_Bank.Items[0].ToString();
             }
@@ -154,7 +149,7 @@ namespace MonthlyReports_Bank
 
         private void ComboBox_Bank_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Array.IndexOf(bank, comboBox_Bank.Text) >= Array.IndexOf(bank, "安平惠民村镇银行") && Array.IndexOf(bank, comboBox_Bank.Text) <= Array.IndexOf(bank, "武邑联社"))
+            if (Array.IndexOf(Bank, comboBox_Bank.Text) >= Array.IndexOf(Bank, "安平惠民村镇银行") && Array.IndexOf(Bank, comboBox_Bank.Text) <= Array.IndexOf(Bank, "武邑联社"))
             {
                 if (comboBox_Bank.Text.Substring(0, 2) != comboBox_County.Text)
                 {

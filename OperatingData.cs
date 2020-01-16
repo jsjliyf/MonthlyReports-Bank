@@ -25,9 +25,10 @@ namespace OperatingData
         /// </summary>
         /// <param name="strFileName">Excel文件路径</param>
         /// <param name="reportType">表格类型</param>
+        /// <param name="isStandard">若是标准格式，则按照首行来创建列;若否，则按照表中最大的列来创建列</param>
         /// <param name="needFirstRow">是否需要取出首行数据，若不需要，则将首行作为DT的列标题</param>
         /// <returns>对应的DataSet</returns>
-        public static DataSet DSFromExcel(string strFileName, string reportType,bool needFirstRow)
+        public static DataSet DSFromExcel(string strFileName, string reportType, bool isStandard, bool needFirstRow)
         {
             DataSet ds = new DataSet();
 
