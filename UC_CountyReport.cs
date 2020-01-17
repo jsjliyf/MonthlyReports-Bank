@@ -109,7 +109,7 @@ namespace MonthlyReports_Bank
                 dsFromExcel = new DataSet();
 
                 //NPoI方式读取Excel
-                dsFromExcel = OperatingData.OperatingData.DSFromExcel(excelPath, "县域基础数据",true);
+                dsFromExcel = CommonModule.OperatingData.DSFromExcel(excelPath, "县域基础数据", true, true, false);
                 if (dsFromExcel == null) return;
                 if (dsFromExcel != null && dsFromExcel.Tables.Count == 0) return;
 
@@ -267,7 +267,7 @@ namespace MonthlyReports_Bank
                     dsFromExcel = new DataSet();
 
                     //NPoI方式读取Excel
-                    dsFromExcel = OperatingData.OperatingData.DSFromExcel(paths[0], "县域基础数据",true);
+                    dsFromExcel = CommonModule.OperatingData.DSFromExcel(paths[0], "县域基础数据", true, true, false);
                     if (dsFromExcel == null) return;
                     if (dsFromExcel != null && dsFromExcel.Tables.Count == 0) return;
                     DataTable dt = dsFromExcel.Tables[0];
@@ -297,7 +297,5 @@ namespace MonthlyReports_Bank
                 CopyToDataGridView(dt_Query);
             }
         }
-
-        
     }
 }
